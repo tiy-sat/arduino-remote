@@ -2,10 +2,10 @@ import bottle
 
 # Just store events and actions in memory for demo
 events = []
-EVENT_FIELDS = ('type', 'source', 'value', 'current')
+EVENT_FIELDS = ('type', 'source', 'name', 'value', 'current')
 
 actions = []
-ACTION_FIELDS = ('type', 'target', 'value', 'processed')
+ACTION_FIELDS = ('type', 'target', 'name', 'value', 'processed')
 
 config = {
     'sources': [],
@@ -22,7 +22,6 @@ def show_config():
 
 @bottle.route('/config', method='POST')
 def set_config():
-    print("----" + str(bottle.request.json))
     config = sanitize_config(bottle.request.json)
 
     return config
@@ -30,7 +29,7 @@ def set_config():
 @bottle.route('/events', method='GET')
 def list_events():
     found_events = events
-    found_events = [ event for event in events if event.getdefault('current', True) ]
+    found_events = [ event for event in events if event.get('current', True) ]
     for event in found_events:
         event['current'] = False
 
@@ -47,7 +46,8 @@ def add_event():
 
 @bottle.route('/actions', method='GET')
 def list_actions():
-    current_actions = [ action for action in actions if action.getdefault('processed', False) ]
+    print("ACTIONS: " + str(actions))
+    current_actions = [ action for action in actions if not action.get('processed', False) ]
     for action in current_actions:
         action['processed'] = True
 
