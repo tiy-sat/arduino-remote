@@ -1,4 +1,15 @@
+import os
+import yaml
 import bottle
+from bottle_swagger import SwaggerPlugin
+
+# Set up swagger
+this_dir = os.path.dirname(os.path.abspath(__file__))
+with open("{0}/swagger.yml".format(this_dir)) as f:
+    swagger_def = yaml.load(f)
+
+bottle.install(SwaggerPlugin(swagger_def, ignore_undefined_routes=True))
+
 
 # Just store events and actions in memory for demo
 events = []
@@ -15,6 +26,14 @@ config = {
 @bottle.route('/')
 def index():
     return '<h1>Arduino remote</h1>'
+
+@bottle.route('/docs')
+def docs_index():
+    bottle.redirect("/docs/index.html")
+
+@bottle.route('/docs/<filename:path>')
+def docs(filename):
+    return bottle.static_file(filename, root=this_dir + "/swagger-ui")
 
 @bottle.route('/config', method='GET')
 def show_config():

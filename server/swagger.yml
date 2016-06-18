@@ -1,0 +1,73 @@
+swagger: '2.0'
+info: {title: Arduino Remote, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+definitions:
+  Event:
+    properties:
+      type: {type: string}
+      source: {type: string}
+      name: {type: string}
+      value: {type: string}
+      current: {type: boolean}
+    required: [type, source, name, value]
+    type: object
+  Action:
+    properties:
+      type: {type: string}
+      target: {type: string}
+      name: {type: string}
+      value: {type: string}
+      processed: {type: boolean}
+    required: [type, target, name, value]
+    type: object
+  Config:
+    properties:
+      sources:
+        type: array
+        items: {type: string}
+      targets:
+        type: array
+        items: {type: string}
+    required: [sources, targets]
+    type: object
+paths:
+  /events:
+    get:
+      responses:
+        '200':
+          description: 'Get a list of current events'
+          schema: {$ref: '#/definitions/Event'}
+# Leaving parts of the specification that are only used by client.py commented out
+    # post:
+    #   parameters:
+    #   - in: body
+    #     name: event
+    #     required: true
+    #     schema: {$ref: '#/definitions/Event'}
+    #   responses:
+    #     '200':
+    #       description: 'Event created'
+    #       schema: {$ref: '#/definitions/Event'}
+  /actions:
+    # get:
+    #   responses:
+    #     '200':
+    #       description: 'Get a list of actions'
+    #       schema: {$ref: '#/definitions/Action'}
+    post:
+      parameters:
+      - in: body
+        name: action
+        required: true
+        schema: {$ref: '#/definitions/Action'}
+      responses:
+        '200':
+          description: 'Action created'
+          schema: {$ref: '#/definitions/Action'}
+  /config:
+    get:
+      responses:
+        '200':
+          description: 'Get config to know what actions and events are possible'
+          schema: {$ref: '#/definitions/Config'}
