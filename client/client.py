@@ -23,7 +23,7 @@ def handle_events(serial_port):
 
     if not line:
         return
-        
+
     event = None
 
     try:
@@ -41,6 +41,7 @@ def handle_events(serial_port):
 
 def handle_actions(serial_port):
     """Get actions from server and send them to serial port."""
+
     response = requests.get(base_url + '/actions')
     if response.status_code != 200:
         logging.error("Request: {0}, Response {1}, {2}".format(response.request.url, response.status, response.body))

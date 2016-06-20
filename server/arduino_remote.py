@@ -8,7 +8,10 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 with open("{0}/swagger.yml".format(this_dir)) as f:
     swagger_def = yaml.load(f)
 
-bottle.install(SwaggerPlugin(swagger_def, ignore_undefined_routes=True))
+bottle.install(SwaggerPlugin(swagger_def,
+                             ignore_undefined_routes=True,
+                             validate_requests=False,
+                             validate_responses=False))
 
 
 # Just store events and actions in memory for demo
@@ -65,7 +68,6 @@ def add_event():
 
 @bottle.route('/actions', method='GET')
 def list_actions():
-    print("ACTIONS: " + str(actions))
     current_actions = [ action for action in actions if not action.get('processed', False) ]
     for action in current_actions:
         action['processed'] = True

@@ -4,6 +4,9 @@
 const int ONBOARD_LED = 13;
 const int LED1 = 2;
 const int BUTTON1 = 3;
+const int RGB_LED_RED = 9;
+const int RGB_LED_GREEN = 10;
+const int RGB_LED_BLUE = 11;
 
 int button1LastState = HIGH;
 
@@ -23,7 +26,7 @@ struct Action {
 
 void setup() {
   // put your setup code here, to run once:
-  
+
   Serial.begin(9600);
 
   Event evt_start = {"config", "arduino", "starting", String("")};
@@ -41,6 +44,9 @@ void setup() {
 
   pinMode(ONBOARD_LED, OUTPUT);
   pinMode(LED1, OUTPUT);
+  pinMode(RGB_LED_RED, OUTPUT);
+  pinMode(RGB_LED_GREEN, OUTPUT);
+  pinMode(RGB_LED_BLUE, OUTPUT);
   pinMode(BUTTON1, INPUT);
 }
 
@@ -55,29 +61,46 @@ void loop() {
   button1LastState = button1State;
 
   Action action;
-  
+
   if (checkForAction(action)) {
-    Serial.print("***TYPE: ");
-    Serial.println(action.type);
     dispatchAction(action);
   }
-  
+
 //  sendEvent("heartbeat", "arduino", "alive", "");
 }
 
 
 void dispatchAction(Action& action) {
-  digitalWrite(ONBOARD_LED, HIGH);
-  delay(500);
-  digitalWrite(ONBOARD_LED, LOW);
-  delay(500);
-
-  
   if (String(action.type) == "led") {
-    digitalWrite(ONBOARD_LED, HIGH);
-    delay(500);
-    digitalWrite(ONBOARD_LED, LOW);
-    delay(500);
+    int target;
+    if (String(action.target) == "onboard_led") {
+      target = ONBOARD_LED;
+    }
+    else if (String(action.target) == "led1") {
+      target = LED1;
+    }
+    else if (String(action.target) == "rgb_led") {
+      if (String(action.name) == "red") {
+        target = RGB_LED_RED;
+      }
+      else if (String(action.name) == "green") {
+        target = RGB_LED_GREEN;
+      }
+      else if (String(action.name) == "blue") {
+        target = RGB_LED_BLUE;
+      }
+    }
+    if (String(action.value) == "on") {
+      digitalWrite(target, HIGH);
+    }
+    else if (String(action.value) == "off") {
+      digitalWrite(target, LOW);
+    }
+    else {
+      int val;
+      val = String(action.value).toInt();
+      analogWrite(target, val);
+    }
   }
 }
 
@@ -95,7 +118,7 @@ void sendEvent(Event& evnt) {
 
 bool checkForAction(Action& action) {
   String input;
-  
+
   while (Serial.available()) {
     char c = Serial.read();
     input += c;
@@ -122,9 +145,9 @@ float getTemp(void) {
   unsigned int wADC;
   float t;
 
-  // The internal temperature has to be used 
+  // The internal temperature has to be used
   // with the internal reference of 1.1V.
-  // Channel 8 can not be selected with 
+  // Channel 8 can not be selected with
   // the analogRead function yet.
 
   // This code is not valid for the Arduino Mega,
@@ -159,4 +182,3 @@ float getTemp(void) {
 
   return (t);
 }
-
