@@ -1,4 +1,5 @@
 import os
+from sys import argv
 import yaml
 import bottle
 from bottle_swagger import SwaggerPlugin
@@ -114,4 +115,5 @@ def sanitize_action(action):
 
 
 if __name__ == '__main__':
-    bottle.run(host='localhost', port=8080, debug=True)
+
+    bottle.run(host='0.0.0.0', port=argv[1])
