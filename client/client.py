@@ -44,7 +44,7 @@ def handle_actions(serial_port):
 
     response = requests.get(base_url + '/actions')
     if response.status_code != 200:
-        logging.error("Request: {0}, Response {1}, {2}".format(response.request.url, response.status, response.body))
+        logging.error("Request: {0}, Response {1}: {2}".format(response.request.url, response.status_code, response.text))
     actions = response.json()['actions']
 
     for action in actions:
