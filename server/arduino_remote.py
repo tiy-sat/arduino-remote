@@ -51,11 +51,11 @@ def set_config():
 @bottle.route('/events', method='GET')
 def list_events():
     found_events = events
-    found_events = [ event for event in events if event.get('current', True) ]
-    for event in found_events:
+    current_events = [ event for event in events if event.get('current', True) ]
+    for event in current_events:
         event['current'] = False
 
-    return dict(events=found_events)
+    return dict(events=events[-1:-6:-1])
 
 @bottle.route('/events', method='POST')
 def add_event():
