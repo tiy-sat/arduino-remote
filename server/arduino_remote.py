@@ -3,8 +3,6 @@ import yaml
 import bottle
 from bottle_swagger import SwaggerPlugin
 
-bottle.debug(True)
-
 class EnableCors(object):
     name = 'enable_cors'
     api = 2
@@ -94,7 +92,7 @@ def list_actions():
 
     return dict(actions=current_actions)
 
-@bottle.route('/actions', method='POST')
+@bottle.route('/actions', method='ANY')
 def add_action():
     action = sanitize_action(bottle.request.json)
     actions.append(action)
