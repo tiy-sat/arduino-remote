@@ -1,5 +1,4 @@
 import os
-from sys import argv
 import yaml
 import bottle
 from bottle_swagger import SwaggerPlugin
@@ -13,7 +12,6 @@ bottle.install(SwaggerPlugin(swagger_def,
                              ignore_undefined_routes=True,
                              validate_requests=False,
                              validate_responses=False))
-
 
 # Just store events and actions in memory for demo
 events = []
@@ -101,7 +99,6 @@ def sanitize_event(event):
 
     return clean_event
 
-
 def sanitize_action(action):
     assert 'type' in action, "Action missing required field 'type'"
     clean_action = {}
@@ -113,7 +110,5 @@ def sanitize_action(action):
 
     return clean_action
 
-
 if __name__ == '__main__':
-
-    bottle.run(host='0.0.0.0', port=argv[1])
+    bottle.run(host='0.0.0.0', port=os.environ.get('PORT', 8080))
