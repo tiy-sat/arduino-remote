@@ -7,7 +7,7 @@
 const int ONBOARD_LED = 13;
 const int LED1 = 2;
 const int BUTTON1 = 3;
-const int PIEZO1 = 5;
+const int PIEZO1 = 6;
 const int RGB_LED_RED = 9;
 const int RGB_LED_GREEN = 10;
 const int RGB_LED_BLUE = 11;
