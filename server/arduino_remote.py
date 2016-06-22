@@ -3,6 +3,8 @@ import yaml
 import bottle
 from bottle_swagger import SwaggerPlugin
 
+bottle.debug(True)
+
 class EnableCors(object):
     name = 'enable_cors'
     api = 2
