@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Arduino Remote</title>
+  </head>
+  <body>
+    <h1>Arduino Remote</h1>
+    <p>This is a simple demo of a set of technologies we can use to connect to an Arduino over the internet.</p>
+    <h2>GitHub</h2>
+    <p>This project is hosted <a href="https://github.com/tiy-sat/arduino-remote">on GitHub</a>.</p>
+    <h2>Components</h2>
+    <ul>
+      <li>Arduino: The Arduino itself runs the code 'controller.ino', and has circuits attached to it.</li>
+      <li>Client: The client runs on a local machine, and is connected to the Arduino with a USB cable.</li>
+      <li>Server: The server runs on a publicly available server.</li>
+    </ul>
+    <h2>Events &amp; Actions</h2>
+    <ul>
+      <li>An Event is something that happens on the Arduino, and is sent to the server.</li>
+      <li>An Action is a command that is sent to the server, which causes something to happen on the Arduino.</li>
+    </ul>
+    <h2>Checking for events</h2>
+    <p>You can check for events with a <a href="/docs/index.html#!/default/get_events">GET request to /events</a>.</p>
+    <h2>Sending actions</h2>
+    <p>Send actions to the arduino with a <a href="/docs/index.html#!/default/post_actions">POST request to /actions</a>.</p>
+    <h3>Example actions</h3>
+    <h4>Turn on the green LED.</h4>
+    <code>
+POST /actions
+{'type': 'led', 'target': 'led1', 'name': '', 'value': 'on'}
+    </code>
+    <h4>Turn the RGB LED "red" (try "green" and "blue").</h4>
+    <code>
+POST /actions
+{'type': 'led', 'target': 'rgb_led', 'name': 'red', 'value': '100'}
+    </code>
+    <h4>Play music</h4>
+    <code>
+POST /actions
+{'type': 'piezo', 'target': '', 'name': '', 'value': 'edcdeeedddeeeedcdeeeeddedc'}
+    </code>
+  </body>
+</html>

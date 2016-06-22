@@ -18,7 +18,6 @@ definitions:
       target: {type: string}
       name: {type: string}
       value: {type: string}
-      processed: {type: boolean}
     required: [type, target, name, value]
     type: object
   Config:

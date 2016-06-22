@@ -27,7 +27,7 @@ config = {
 
 @bottle.route('/')
 def index():
-    return '<h1>Arduino remote</h1>'
+    return bottle.static_file('index.html', root=this_dir)
 
 @bottle.route('/docs')
 def docs_index():
