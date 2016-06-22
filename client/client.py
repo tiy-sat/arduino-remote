@@ -35,7 +35,7 @@ def handle_events(serial_port):
     if event:
         response = requests.post(base_url + '/events', json=event)
         if response.status_code != 200:
-            logging.error("Request: {0}, Response: {1}, {2}".format(response.request.url, response.status, response.body))
+            logging.error("Request: {0}, Response: {1}".format(response.request.url, response.status_code))
 
     return
 

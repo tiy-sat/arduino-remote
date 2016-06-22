@@ -1,12 +1,23 @@
+// Much of this code is based on the most excellent Sparkfun Intventors Kit:
+// https://www.sparkfun.com/products/12060
+
 #include <ArduinoJson.h>
 #include <stdlib.h>
 
 const int ONBOARD_LED = 13;
 const int LED1 = 2;
 const int BUTTON1 = 3;
+const int PIEZO1 = 5;
 const int RGB_LED_RED = 9;
 const int RGB_LED_GREEN = 10;
 const int RGB_LED_BLUE = 11;
+
+const int LIGHT_SENSOR = 0;
+
+int HIGH_LIGHT_LEVEL = 1023;
+int LOW_LIGHT_LEVEL = 0;
+
+int lastLightLevel = 0;
 
 int button1LastState = HIGH;
 
@@ -25,8 +36,6 @@ struct Action {
 };
 
 void setup() {
-  // put your setup code here, to run once:
-
   Serial.begin(9600);
 
   Event evt_start = {"config", "arduino", "starting", String("")};
@@ -47,11 +56,32 @@ void setup() {
   pinMode(RGB_LED_RED, OUTPUT);
   pinMode(RGB_LED_GREEN, OUTPUT);
   pinMode(RGB_LED_BLUE, OUTPUT);
+  pinMode(PIEZO1, OUTPUT);
   pinMode(BUTTON1, INPUT);
 }
 
 void loop() {
   int button1State = digitalRead(BUTTON1);
+  int lightLevel = analogRead(LIGHT_SENSOR);
+  bool calibrating = false;
+
+  if (lightLevel < HIGH_LIGHT_LEVEL) {
+    // Because resistence decreases with the amount of light, a lower value means more light.
+
+    HIGH_LIGHT_LEVEL = lightLevel;
+    calibrating = true;
+  }
+  if (lightLevel > LOW_LIGHT_LEVEL) {
+    LOW_LIGHT_LEVEL = lightLevel;
+    calibrating = true;
+  }
+
+  lightLevel = map(lightLevel, HIGH_LIGHT_LEVEL, LOW_LIGHT_LEVEL, 0, 3);
+  if (lightLevel != lastLightLevel && !calibrating) {
+    Event evt_lightlevel = {"light_sensor", "light_sensor1", "level", String(lightLevel)};
+    sendEvent(evt_lightlevel);
+  }
+  lastLightLevel = lightLevel;
 
   if (button1State == LOW && button1LastState == HIGH) {
     Event evt_button = {"button", "button1", "pressed", "True"};
@@ -66,11 +96,12 @@ void loop() {
     dispatchAction(action);
   }
 
-//  sendEvent("heartbeat", "arduino", "alive", "");
 }
 
 
 void dispatchAction(Action& action) {
+  int x;
+
   if (String(action.type) == "led") {
     int target;
     if (String(action.target) == "onboard_led") {
@@ -101,6 +132,18 @@ void dispatchAction(Action& action) {
       val = String(action.value).toInt();
       analogWrite(target, val);
     }
+  }
+  else if (String(action.type) == "piezo") {
+    // For now, don't care about target, name
+    String val;
+    val = String(action.value);
+    int x;
+    for (x = 0; x < val.length(); x++) {
+      char note = val.charAt(x);
+      play(PIEZO1, note, 3200);
+      delay(400);
+    }
+    noTone(PIEZO1);
   }
 }
 
@@ -139,6 +182,25 @@ bool checkForAction(Action& action) {
   return false;
 }
 
+void play(int pin, char note, int duration) {
+  int i;
+
+  const int numNotes = 8;  // number of notes we're storing
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int frequencies[] = {262, 294, 330, 349, 392, 440, 494, 523};
+
+  int freq;
+
+  for (i = 0; i < numNotes; i++) {
+    if (names[i] == note) {
+      freq = frequencies[i];
+    }
+  }
+
+  tone(pin, freq, duration);
+
+  return;
+}
 
 // getTemp from http://playground.arduino.cc/Main/ShowInfo
 float getTemp(void) {
