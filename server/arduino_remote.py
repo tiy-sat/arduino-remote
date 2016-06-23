@@ -66,7 +66,7 @@ def set_config():
 
     return config
 
-@bottle.route('/events', method='GET')
+@bottle.route('/events', method='ANY')
 def list_events():
     found_events = events
     current_events = [ event for event in events if event.get('current', True) ]
